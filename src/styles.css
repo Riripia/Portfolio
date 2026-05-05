@@ -63,8 +63,20 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  /* Cottagecore webcore palette */
+  --background: oklch(0.96 0.04 95);
+  --foreground: oklch(0.32 0.08 35);
+  --cream: oklch(0.97 0.04 90);
+  --cream-deep: oklch(0.93 0.06 88);
+  --moss: oklch(0.62 0.13 135);
+  --moss-deep: oklch(0.48 0.13 138);
+  --moss-soft: oklch(0.82 0.09 130);
+  --tomato: oklch(0.62 0.19 25);
+  --tomato-soft: oklch(0.78 0.14 28);
+  --berry: oklch(0.55 0.20 15);
+  --honey: oklch(0.82 0.16 75);
+  --sky: oklch(0.82 0.09 220);
+  --ink: oklch(0.35 0.08 40);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
