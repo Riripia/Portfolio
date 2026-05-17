@@ -29,9 +29,9 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "moss & marigold ✿ a multimedia portfolio by juno park" },
-      { name: "description", content: "the cozy corner of juno park — multimedia arts student. zines, motion, sound, and small soft worlds." },
-      { property: "og:title", content: "moss & marigold ✿ juno park" },
+      { title: "✿ a multimedia portfolio by Caurie M. Piamonte" },
+      { name: "description", content: "the cozy corner of Caurie M. Piamonte — multimedia arts student. zines, motion, sound, and small soft worlds." },
+      { property: "og:title", content: "moss & marigold ✿ Caurie M. Piamonte" },
       { property: "og:description", content: "a cottagecore portfolio of zines, motion graphics, sound design and tender little experiments." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
