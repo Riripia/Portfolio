@@ -1,28 +1,65 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import cottage from "@/assets/cottage.jpg";
-import rain from "@/assets/rain.jpg";
-import avatar from "@/assets/avatar.png";
-import sketchbook from "@/assets/sketchbook.jpg";
-import claybear from "@/assets/claybear.jpg";
-import zine from "@/assets/zine.jpg";
+import { useEffect, useState, useRef } from "react";
+import Bea from "@/assets/6093750284933861391.jpg";
+import petra from "@/assets/6093750284933861403.jpg";
+import tanghals11 from "@/assets/6093750284933861408.jpg";
+import avatar from "@/assets/60937502849338613892.jpg";
+import beach from "@/assets/6093750284933861374.jpg";
+import Up from "@/assets/6093750284933861397.jpg";
+import zine from "@/assets/6093750284933861395.jpg";
+import Stopmotion from "@/assets/6093750284933861395.jpg";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type TabId = "about" | "works" | "projects" | "comms" | "contact" | "shrine";
+
+interface AudioTrack {
+  name: string;
+  url: string;
+  duration?: number;
+}
+
+// ─── Static data ─────────────────────────────────────────────────────────────
+
 const works = [
-  { title: "moss & marigold", tag: "zine • risograph", img: zine, blurb: "a 24-page riso zine about kitchen herbs, tiny windows and the smell of rain." },
-  { title: "if the kettle could sing", tag: "stop motion • 02:14", img: claybear, blurb: "a clay bear waits for tea. a meditation on patience, sculpted in plasticine." },
-  { title: "field notes vol. iii", tag: "sketchbook • print", img: sketchbook, blurb: "pressed flowers, gouache swatches, and notes from a slow summer." },
-  { title: "umbrella weather", tag: "illustration • gouache", img: rain, blurb: "two friends, two mushroom umbrellas, one quiet afternoon of drizzle." },
+  { title: "Photography", tag: "Passion Projects", img: Bea, blurb: "a compilation of photos i took" },
+  { title: "Stop Motion", tag: "stop motion • 02:14", img: Up, blurb: "a clay bear waits for tea. a meditation on patience, sculpted in plasticine." },
+  { title: "Production Projects", tag: "beach • print", img: beach, blurb: "pressed flowers, gouache swatches, and notes from a slow summer." },
+  { title: "UI/UX Designs", tag: "illustration • gouache", img: tanghals11, blurb: "two friends, two mushroom umbrellas, one quiet afternoon of drizzle." },
 ];
+
+const TABS: { id: TabId; label: string }[] = [
+  { id: "about",    label: "✿ about"    },
+  { id: "works",    label: "✎ works"    },
+  { id: "projects", label: "🎮 projects" },
+  { id: "comms",    label: "❀ comms"    },
+  { id: "contact",  label: "✉ contact"  },
+  { id: "shrine",   label: "♡ shrine"   },
+];
+
+// ─── Root component ───────────────────────────────────────────────────────────
 
 function Index() {
   const [time, setTime] = useState("");
+  const [activeTab, setActiveTab] = useState<TabId>("about");
+
   useEffect(() => {
-    const t = () => setTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-    t(); const id = setInterval(t, 30_000); return () => clearInterval(id);
+    const t = () =>
+      setTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+    t();
+    const id = setInterval(t, 30_000);
+    return () => clearInterval(id);
   }, []);
 
   return (
@@ -34,24 +71,14 @@ function Index() {
         <div className="absolute -bottom-10 left-1/3 h-64 w-64 rounded-full bg-[var(--honey)] opacity-30 blur-3xl" />
       </div>
 
-      {/* Browser window */}
       <div className="mx-auto max-w-6xl">
         <BrowserWindow time={time}>
           <div className="grid gap-6 p-5 md:p-8">
             <Hero />
-            <TabsRow />
-            <div className="grid gap-6 md:grid-cols-[1.05fr_1fr_1fr]">
-              <AboutCard />
-              <ScenePolaroid />
-              <LinksCard />
-            </div>
-            <NowPlaying />
-            <div className="grid gap-6 md:grid-cols-[1fr_1.2fr]">
-              <CottageCard />
-              <WorksList />
-            </div>
-            <GalleryStrip />
-            <Guestbook />
+            {/* ── Tab bar ── */}
+            <TabsRow activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* ── Tab panels ── */}
+            <TabPanel activeTab={activeTab} />
           </div>
           <Marquee />
         </BrowserWindow>
@@ -62,7 +89,7 @@ function Index() {
   );
 }
 
-/* ------------------------------ pieces ------------------------------ */
+// ─── Browser chrome ───────────────────────────────────────────────────────────
 
 function BrowserWindow({ children, time }: { children: React.ReactNode; time: string }) {
   return (
@@ -75,7 +102,7 @@ function BrowserWindow({ children, time }: { children: React.ReactNode; time: st
           <span className="h-3 w-3 rounded-full bg-[var(--moss)] border border-[var(--moss-deep)]" />
         </div>
         <div className="flex-1 truncate rounded-md bg-[var(--cream)] px-3 py-1 text-xs md:text-sm font-pixel text-[var(--moss-deep)] border border-[var(--moss-deep)]">
-          🍄 https://moss-and-marigold.carrd.co/ ·· welcome friend ··
+          🍄 https://vaniillaberri.portfolio.co/ ·· welcome friend ··
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs font-pixel text-[var(--moss-deep)]">
           <span className="animate-blink">●</span> rec · {time || "––:––"}
@@ -89,7 +116,7 @@ function BrowserWindow({ children, time }: { children: React.ReactNode; time: st
         <div className="flex-1 rounded-full border-2 border-[var(--moss-deep)] bg-[var(--cream)] px-4 py-1 text-sm font-hand text-[var(--ink)]">
           🌱 search the garden…
         </div>
-        <span className="hidden md:inline font-marker text-2xl text-[var(--tomato)] -rotate-3">by juno.park</span>
+        <span className="hidden md:inline font-marker text-2xl text-[var(--tomato)] -rotate-3">by Vaniillaberri</span>
       </div>
       {children}
     </div>
@@ -104,29 +131,34 @@ function NavBtn({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
 function Hero() {
   return (
     <section className="relative overflow-hidden rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-6 md:p-8">
       <div className="absolute inset-0 polka opacity-30" />
       <div className="relative grid gap-6 md:grid-cols-[auto_1fr_auto] items-center">
         <div className="relative">
-          <div className="rounded-2xl border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] p-2 -rotate-3">
-            <img src={avatar} alt="pixel portrait of juno" width={128} height={128} className="h-28 w-28 rounded-xl" />
+          <div className="w-40 bg-white p-3 shadow-lg -rotate-3">
+            <div className="bg-[var(--cream-deep)] overflow-hidden">
+              <img src={avatar} alt="pixel portrait" width={128} height={128} className="w-full h-32 object-cover" />
+            </div>
+            <div className="mt-3 h-8 bg-white" />
           </div>
-          <span className="tape -top-3 left-6 -rotate-12" />
+          <span className="tape -top-2 left-4 -rotate-12 absolute" />
+          <span className="tape -top-2 right-6 rotate-6 absolute" />
         </div>
         <div>
           <p className="font-pixel text-sm uppercase tracking-widest text-[var(--moss-deep)]">·· hello world ··</p>
           <h1 className="mt-1 text-5xl md:text-7xl leading-none text-[var(--moss-deep)]">
-            juno park <span className="text-[var(--tomato)]">✿</span>
+            Caurie M. Piamonte <span className="text-[var(--tomato)]">✿</span>
           </h1>
           <p className="mt-2 max-w-xl font-hand text-lg text-[var(--ink)]">
-            multimedia arts student making zines, stop-motion, sound collages and tender little internet gardens.
-            currently brewing tea & a thesis film about <em>moss</em>.
+            a multimedia arts student and aspiring game developer, drifting between animation, stop motion, and photography.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <Pill color="moss">she/they</Pill>
-            <Pill color="tomato">b. 2003 · seoul ↔ portland</Pill>
+            <Pill color="moss">she/her</Pill>
+            <Pill color="tomato">b. 2005 · Manila</Pill>
             <Pill color="honey">open for collabs</Pill>
           </div>
         </div>
@@ -151,42 +183,499 @@ function Pill({ children, color }: { children: React.ReactNode; color: "moss" | 
   );
 }
 
-function TabsRow() {
-  const tabs = ["✿ about", "✎ works", "❀ comms", "✉ contact", "♡ shrine"];
+// ─── Tab bar (now functional) ─────────────────────────────────────────────────
+
+function TabsRow({
+  activeTab,
+  onTabChange,
+}: {
+  activeTab: TabId;
+  onTabChange: (id: TabId) => void;
+}) {
   return (
     <div className="flex flex-wrap items-end gap-2 border-b-2 border-dashed border-[var(--moss-deep)] pb-1">
-      {tabs.map((t, i) => (
-        <button key={t}
-          className={`group relative -mb-0.5 flex items-center gap-2 rounded-t-xl border-2 border-b-0 border-[var(--moss-deep)] px-4 py-2 font-hand text-base ${i === 0 ? "bg-[var(--cream)] text-[var(--moss-deep)]" : "bg-[var(--cream-deep)] text-[var(--ink)] opacity-80 hover:opacity-100"}`}>
-          {t}
-          <span className="text-xs text-[var(--tomato)]">✕</span>
+      {TABS.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id)}
+          className={`group relative -mb-0.5 flex items-center gap-2 rounded-t-xl border-2 border-b-0 border-[var(--moss-deep)] px-4 py-2 font-hand text-base transition-colors ${
+            activeTab === tab.id
+              ? "bg-[var(--cream)] text-[var(--moss-deep)]"
+              : "bg-[var(--cream-deep)] text-[var(--ink)] opacity-80 hover:opacity-100 hover:bg-[var(--cream)]"
+          }`}
+        >
+          {tab.label}
+          {activeTab === tab.id && (
+            <span className="text-xs text-[var(--tomato)]">✕</span>
+          )}
         </button>
       ))}
     </div>
   );
 }
 
+// ─── Tab panel router ─────────────────────────────────────────────────────────
+
+function TabPanel({ activeTab }: { activeTab: TabId }) {
+  switch (activeTab) {
+    case "about":    return <AboutTab />;
+    case "works":    return <WorksTab />;
+    case "projects": return <ProjectsTab />;
+    case "comms":    return <CommsTab />;
+    case "contact":  return <ContactTab />;
+    case "shrine":   return <ShrineTab />;
+  }
+}
+
+// ─── About tab (original layout) ─────────────────────────────────────────────
+
+function AboutTab() {
+  return (
+    <>
+      <div className="grid gap-6 md:grid-cols-[1.05fr_1fr_1fr]">
+        <AboutCard />
+        <ScenePolaroid />
+        <LinksCard />
+      </div>
+      <NowPlaying />
+      <div className="grid gap-6 md:grid-cols-[1fr_1.2fr]">
+        <CottageCard />
+        <WorksList />
+      </div>
+      <GalleryStrip />
+      <Guestbook />
+    </>
+  );
+}
+
+// ─── Works tab ────────────────────────────────────────────────────────────────
+
+function WorksTab() {
+  const [selectedWork, setSelectedWork] = useState<(typeof works)[0] | null>(null);
+
+  return (
+    <section className="grid gap-6">
+      <header className="flex items-baseline justify-between border-b-2 border-dashed border-[var(--moss-deep)] pb-2">
+        <h2 className="font-marker text-4xl text-[var(--moss-deep)]">selected works ✎</h2>
+        <span className="font-pixel text-xs text-[var(--tomato)]">2023 — 2026</span>
+      </header>
+      <div className="grid gap-5 md:grid-cols-2">
+        {works.map((w) => (
+          <article key={w.title} className="relative rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] overflow-hidden">
+            <div className="h-52 overflow-hidden border-b-2 border-[var(--moss-deep)]">
+              <img src={w.img} alt={w.title} className="w-full h-full object-cover" />
+            </div>
+            <div className="p-4">
+              <div className="flex items-baseline justify-between gap-2">
+                <h3 className="font-marker text-2xl text-[var(--berry)]">{w.title}</h3>
+                <span className="font-pixel text-[10px] uppercase tracking-widest text-[var(--moss-deep)]">{w.tag}</span>
+              </div>
+              <p className="mt-1 font-hand text-sm text-[var(--ink)]">{w.blurb}</p>
+              <button
+                onClick={() => setSelectedWork(w)}
+                className="mt-3 rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-4 py-1 font-pixel text-sm text-[var(--moss-deep)] hover:bg-[var(--moss)] hover:text-[var(--cream)] transition-colors">
+                view project →
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+      {/* Audio player section */}
+      <AudioUploader />
+
+      {/* Project viewer modal */}
+      {selectedWork && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border-4 border-[var(--moss-deep)] bg-[var(--cream)] p-8">
+            <button
+              onClick={() => setSelectedWork(null)}
+              className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] font-marker text-xl text-[var(--cream)] hover:bg-[var(--berry)] transition-colors"
+            >
+              ✕
+            </button>
+            <img src={selectedWork.img} alt={selectedWork.title} className="w-full rounded-xl border-2 border-[var(--moss-deep)] object-cover" />
+            <h2 className="mt-6 font-marker text-4xl text-[var(--moss-deep)]">{selectedWork.title}</h2>
+            <p className="mt-2 font-pixel text-xs uppercase text-[var(--tomato)]">{selectedWork.tag}</p>
+            <p className="mt-4 font-hand text-lg text-[var(--ink)]">{selectedWork.blurb}</p>
+            <div className="mt-6 space-y-2">
+              <p className="font-marker text-xl text-[var(--berry)]">details</p>
+              <p className="font-hand text-sm text-[var(--ink)]">click to edit this project description and add more details about your process, materials, or inspiration.</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ─── Projects tab ─────────────────────────────────────────────────────────────
+
+function ProjectsTab() {
+  return (
+    <section className="grid gap-6">
+      <header className="flex items-baseline justify-between border-b-2 border-dashed border-[var(--moss-deep)] pb-2">
+        <h2 className="font-marker text-4xl text-[var(--moss-deep)]">projects 🎮</h2>
+        <span className="font-pixel text-xs text-[var(--tomato)]">in progress</span>
+      </header>
+      <div className="grid gap-6">
+        <article className="relative rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-6">
+          <h3 className="font-marker text-3xl text-[var(--berry)]">Creative Canvas</h3>
+          <p className="mt-2 font-hand text-sm text-[var(--ink)]">
+            A portfolio website built with React, TypeScript, and Tailwind CSS. Features an interactive carousel gallery, audio player, and tabbed navigation system.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">React</span>
+            <span className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">TypeScript</span>
+            <span className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">Tailwind</span>
+          </div>
+          <a href="#" className="mt-4 inline-block rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] px-5 py-2 font-marker text-lg text-[var(--cream)] hover:bg-[var(--berry)] transition-colors">
+            view on github →
+          </a>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+// ─── Audio uploader + player ──────────────────────────────────────────────────
+
+function AudioUploader() {
+  const [tracks, setTracks] = useState<AudioTrack[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Sync audio element with state
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      setProgress(audio.duration ? (audio.currentTime / audio.duration) * 100 : 0);
+    };
+    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onEnded = () => setIsPlaying(false);
+
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("ended", onEnded);
+    return () => {
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, [currentTrack]);
+
+  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    const newTracks: AudioTrack[] = files
+      .filter((f) => f.type.startsWith("audio/"))
+      .map((f) => ({ name: f.name.replace(/\.[^.]+$/, ""), url: URL.createObjectURL(f) }));
+    setTracks((prev) => [...prev, ...newTracks]);
+    // Auto-play first uploaded track if nothing is playing
+    if (newTracks.length > 0 && !currentTrack) {
+      loadTrack(newTracks[0]);
+    }
+  }
+
+  function loadTrack(track: AudioTrack) {
+    setCurrentTrack(track);
+    setProgress(0);
+    setCurrentTime(0);
+    if (audioRef.current) {
+      audioRef.current.src = track.url;
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  }
+
+  function togglePlay() {
+    if (!audioRef.current || !currentTrack) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying((p) => !p);
+  }
+
+  function seek(e: React.MouseEvent<HTMLDivElement>) {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = ratio * duration;
+  }
+
+  function formatTime(s: number) {
+    if (!s || isNaN(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  }
+
+  return (
+    <article className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-5">
+      <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-2 absolute" />
+      <h2 className="font-marker text-3xl text-[var(--moss-deep)]">♪ sound archive</h2>
+      <p className="mt-1 font-hand text-sm text-[var(--ink)]">upload field recordings, tapes, collages — play them right here.</p>
+
+      {/* Hidden audio element */}
+      <audio ref={audioRef} />
+
+      {/* Upload button */}
+      <div className="mt-4">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="audio/*"
+          multiple
+          className="hidden"
+          onChange={handleFileUpload}
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center gap-2 rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-5 py-2 font-pixel text-sm text-[var(--moss-deep)] hover:bg-[var(--moss)] hover:text-[var(--cream)] transition-colors"
+        >
+          ↑ upload audio files
+        </button>
+      </div>
+
+      {/* Player bar (visible when a track is loaded) */}
+      {currentTrack && (
+        <div className="mt-4 stripes-moss rounded-xl border-2 border-[var(--moss-deep)] px-5 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-[var(--cream)]">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={togglePlay}
+                className="grid h-8 w-8 place-items-center rounded-full border-2 border-[var(--cream)] bg-[var(--cream)]/20 hover:bg-[var(--cream)]/40 transition-colors font-pixel text-lg"
+              >
+                {isPlaying ? "❚❚" : "▶"}
+              </button>
+              <p className="font-marker text-xl truncate max-w-[200px]">♪ {currentTrack.name}</p>
+            </div>
+            <div className="flex items-center gap-2 font-pixel text-sm w-full md:w-auto">
+              <span>{formatTime(currentTime)}</span>
+              <div
+                className="relative block h-2 flex-1 min-w-[120px] cursor-pointer rounded-full bg-[var(--cream)]/40"
+                onClick={seek}
+              >
+                <span
+                  className="absolute left-0 top-0 h-2 rounded-full bg-[var(--honey)] transition-all"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tracklist */}
+      {tracks.length > 0 && (
+        <ul className="mt-3 divide-y-2 divide-dashed divide-[var(--moss)]/40">
+          {tracks.map((track, i) => (
+            <li key={i}>
+              <button
+                onClick={() => loadTrack(track)}
+                className={`flex w-full items-center gap-3 py-2 px-1 font-hand text-sm rounded transition-colors hover:bg-[var(--moss-soft)] ${
+                  currentTrack?.url === track.url ? "text-[var(--berry)] font-semibold" : "text-[var(--ink)]"
+                }`}
+              >
+                <span className="font-pixel text-xs text-[var(--tomato)]">{String(i + 1).padStart(2, "0")}</span>
+                <span className="truncate">{track.name}</span>
+                {currentTrack?.url === track.url && isPlaying && (
+                  <span className="ml-auto font-pixel text-xs text-[var(--moss-deep)] animate-pulse">▶ playing</span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {tracks.length === 0 && (
+        <p className="mt-4 font-pixel text-xs text-[var(--moss-deep)]/60">no tracks yet · upload some to begin ♪</p>
+      )}
+    </article>
+  );
+}
+
+// ─── Comms tab ────────────────────────────────────────────────────────────────
+
+function CommsTab() {
+  return (
+    <section className="grid gap-6 md:grid-cols-2">
+      <article className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-6">
+        <h2 className="font-marker text-3xl text-[var(--moss-deep)]">❀ commissions</h2>
+        <p className="mt-2 font-hand text-base text-[var(--ink)]">
+          currently open for small commissions! i work best on projects that feel slow and tender.
+        </p>
+        <ul className="mt-4 space-y-2 font-hand text-sm">
+          <Bullet emoji="🌿">zine illustration (1–3 color riso)</Bullet>
+          <Bullet emoji="📼">sound collage / ambient pieces</Bullet>
+          <Bullet emoji="🕸">hand-coded little web pages</Bullet>
+          <Bullet emoji="🧸">stop-motion concepts & storyboards</Bullet>
+        </ul>
+        <div className="mt-4 rounded-lg border-2 border-dashed border-[var(--tomato)] bg-[var(--tomato-soft)] p-3">
+          <p className="font-pixel text-xs uppercase text-[var(--berry)]">rates</p>
+          <p className="font-hand text-sm text-[var(--ink)]">starting at $40 · sliding scale available · always ask ✉</p>
+        </div>
+      </article>
+      <article className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] p-6">
+        <h2 className="font-marker text-3xl text-[var(--moss-deep)]">process notes</h2>
+        <p className="mt-2 font-hand text-sm text-[var(--ink)]">
+          every project starts with a long email and ends with something small and real.
+          turnaround is usually 2–4 weeks depending on scope.
+        </p>
+        <ol className="mt-4 space-y-2 font-hand text-sm list-decimal list-inside text-[var(--ink)]">
+          <li>send me a little note about what you're imagining</li>
+          <li>we have a slow back-and-forth to find the shape of it</li>
+          <li>i send sketches / rough drafts for feedback</li>
+          <li>final files delivered with a handwritten note (digital or mail)</li>
+        </ol>
+      </article>
+    </section>
+  );
+}
+
+// ─── Contact tab ──────────────────────────────────────────────────────────────
+
+function ContactTab() {
+  const [sent, setSent] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", msg: "" });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.name || !form.msg) return;
+    // In a real app you'd POST to an API here.
+    setSent(true);
+  }
+
+  return (
+    <section className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
+      <article className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-6">
+        <h2 className="font-marker text-3xl text-[var(--moss-deep)]">✉ say hello</h2>
+        <p className="mt-1 font-hand text-sm text-[var(--ink)]">i read every message, slowly and with tea.</p>
+
+        {sent ? (
+          <div className="mt-6 rounded-xl border-2 border-dashed border-[var(--moss-deep)] bg-[var(--moss-soft)] p-6 text-center">
+            <p className="font-marker text-3xl text-[var(--moss-deep)]">✿ sent with love ✿</p>
+            <p className="mt-2 font-hand text-sm text-[var(--ink)]">i'll write back soon!</p>
+          </div>
+        ) : (
+          <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+            <input
+              placeholder="your name"
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              className="w-full rounded-md border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] px-3 py-2 font-hand placeholder:text-[var(--moss-deep)]/60"
+            />
+            <input
+              placeholder="email (optional)"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              className="w-full rounded-md border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] px-3 py-2 font-hand placeholder:text-[var(--moss-deep)]/60"
+            />
+            <textarea
+              placeholder="your message…"
+              rows={4}
+              value={form.msg}
+              onChange={(e) => setForm((f) => ({ ...f, msg: e.target.value }))}
+              className="w-full rounded-md border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] px-3 py-2 font-hand placeholder:text-[var(--moss-deep)]/60"
+            />
+            <button
+              type="submit"
+              className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] px-5 py-2 font-marker text-xl text-[var(--cream)] hover:bg-[var(--berry)] transition-colors"
+            >
+              send with love ♡
+            </button>
+          </form>
+        )}
+      </article>
+
+      <article className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] p-6">
+        <h2 className="font-marker text-3xl text-[var(--moss-deep)]">find me</h2>
+        <ul className="mt-3 space-y-2">
+          {[
+            { label: "tumblr garden", icon: "🌷", href: "#" },
+            { label: "instagram (art)", icon: "🍓", href: "#" },
+            { label: "are.na pile", icon: "🍂", href: "#" },
+            { label: "bandcamp tapes", icon: "🍄", href: "#" },
+          ].map((l) => (
+            <li key={l.label}>
+              <a href={l.href}
+                className="flex items-center gap-3 rounded-lg border-2 border-[var(--moss-deep)] bg-[var(--cream)] px-3 py-2 font-hand text-base text-[var(--moss-deep)] hover:translate-x-1 hover:bg-[var(--honey)] transition-transform">
+                <span className="text-xl">{l.icon}</span>
+                <span className="underline decoration-dotted underline-offset-2">{l.label}</span>
+                <span className="ml-auto font-pixel text-[var(--tomato)]">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </section>
+  );
+}
+
+// ─── Shrine tab ───────────────────────────────────────────────────────────────
+
+function ShrineTab() {
+  const items = [
+    { emoji: "☕", label: "Coffee", note: "i am so craving cold ube latte" },
+    { emoji: "⛰️", label: "Travelling", note: "in desperate need of sidequest" },
+    { emoji: "💿", label: "Music", note: "obsessed with Tate Mcrae" },
+    { emoji: "🎬", label: "Movies", note: "Binge-ing Off Canpus rn" },
+    { emoji: "🐇", label: "Kuromi", note: "alt bunny" },
+    { emoji: "📷S", label: "Camera", note: "i hav nikon Nikon D3300 and Nikon Coolpix s6300 " },
+  ];
+
+  return (
+    <section className="grid gap-6">
+      <header className="text-center">
+        <h2 className="font-marker text-4xl text-[var(--moss-deep)]">♡ things i love ♡</h2>
+        <p className="mt-1 font-hand text-base text-[var(--ink)]">a shrine to small soft beautiful things.</p>
+      </header>
+      <div className="grid gap-4 md:grid-cols-3">
+        {items.map((item) => (
+          <div key={item.label} className="relative rounded-xl border-2 border-dashed border-[var(--moss-deep)] bg-[var(--cream)] p-4 text-center hover:bg-[var(--honey)] transition-colors">
+            <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-1 absolute" />
+            <div className="text-4xl mb-2">{item.emoji}</div>
+            <h3 className="font-marker text-xl text-[var(--berry)]">{item.label}</h3>
+            <p className="font-hand text-xs text-[var(--ink)] mt-1">{item.note}</p>
+          </div>
+        ))}
+      </div>
+      <GalleryStrip />
+    </section>
+  );
+}
+
+// ─── Shared sub-components ────────────────────────────────────────────────────
+
 function AboutCard() {
   return (
     <article className="relative rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-5">
-      <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-2" />
+      <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-2 absolute" />
       <header className="mb-3 flex items-baseline justify-between border-b-2 border-dashed border-[var(--moss-deep)] pb-2">
-        <h2 className="font-marker text-3xl text-[var(--moss-deep)]">about me 🍄</h2>
+        <h2 className="font-marker text-3xl text-[var(--moss-deep)]">About me 🍄</h2>
         <span className="font-pixel text-xs text-[var(--tomato)]">v.07</span>
       </header>
-      <p className="font-hand text-base leading-relaxed text-[var(--ink)]">
-        hi! i'm <strong>juno</strong>, a fourth-year multimedia arts student at <u className="decoration-dotted">PNCA</u>.
-        i make work about small worlds — kitchens, mosses, the way an old tape player hisses before the song starts.
+      <p className="font-hand text-base leading-relaxed text-[var(--ink)]">S
+        hi! i'm <strong>Riri</strong>, a Third-year multimedia arts student at <u className="decoration-dotted">National University - Manila</u>.
+        Rooted in shoujo-inspired aesthetics, My work drifts through soft, glowing, and slightly distorted spaces—where beauty and discomfort exist side by side. Each piece feels like a fragile, altered memory, balancing intimacy with something quietly unsettling.
+
+        <Bullet emoji="🌿">Photographer</Bullet>
+        <Bullet emoji="📼">Creative Director</Bullet>
+        <Bullet emoji="📖">illustrator</Bullet>
+        <Bullet emoji="🕸"> Aspiring Game Developer</Bullet>
       </p>
-      <ul className="mt-3 space-y-1.5 font-hand text-sm">
-        <Bullet emoji="🌿">stop-motion & paper puppetry</Bullet>
-        <Bullet emoji="📼">field recording & sound collage</Bullet>
-        <Bullet emoji="📖">risograph zines (3-color, always)</Bullet>
-        <Bullet emoji="🕸">handcoded little websites like this</Bullet>
-      </ul>
       <div className="mt-4 rounded-lg border-2 border-dashed border-[var(--tomato)] bg-[var(--tomato-soft)] p-3">
         <p className="font-pixel text-xs uppercase text-[var(--berry)]">currently</p>
-        <p className="font-hand text-sm text-[var(--ink)]">growing basil · re-reading <em>the wind in the willows</em> · learning the hammered dulcimer (badly).</p>
+        <p className="font-hand text-sm text-[var(--ink)]">ARtifacts · creating a 3D museum app · learning cybersecurity </p>
       </div>
     </article>
   );
@@ -200,23 +689,22 @@ function ScenePolaroid() {
   return (
     <div className="relative rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-3">
       <div className="overflow-hidden rounded-lg border-2 border-[var(--moss-deep)]">
-        <img src={rain} alt="two creatures with mushroom umbrellas" width={768} height={768} className="aspect-square w-full object-cover" loading="lazy" />
+        <img src={tanghals11} alt="two creatures with mushroom umbrellas" width={768} height={768} className="aspect-square w-full object-cover" loading="lazy" />
       </div>
-      <p className="mt-3 text-center font-marker text-2xl text-[var(--moss-deep)]">·· umbrella weather ··</p>
-      <p className="text-center font-hand text-sm text-[var(--ink)]">july 14 · taken on a walk home</p>
-      <span className="tape -top-3 left-4 rotate-6" />
-      <span className="tape -top-3 right-4 -rotate-6" />
+      <p className="mt-3 text-center font-marker text-2xl text-[var(--moss-deep)]">·· Tanghalang Nasyunal ··</p>
+      <p className="text-center font-hand text-sm text-[var(--ink)]">May 27 · Season 1</p>
+      <span className="tape -top-3 left-4 rotate-6 absolute" />
+      <span className="tape -top-3 right-4 -rotate-6 absolute" />
     </div>
   );
 }
 
 function LinksCard() {
   const links = [
-    { label: "tumblr garden", icon: "🌷", href: "#" },
-    { label: "instagram (art)", icon: "🍓", href: "#" },
-    { label: "are.na pile", icon: "🍂", href: "#" },
+    { label: "instagram (art)", icon: "🍓", href: "https://www.instagram.com/vaniillaberrii/" },
+    { label: "GitHub", icon: "🍂", href: "https://github.com/Riripia" },
     { label: "bandcamp tapes", icon: "🍄", href: "#" },
-    { label: "email me ✉", icon: "🌼", href: "#" },
+    { label: "email me ✉", icon: "🌼", href: "Cauriepiamonte@gmail.com" },
   ];
   return (
     <article className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] p-5 relative">
@@ -238,16 +726,83 @@ function LinksCard() {
 }
 
 function NowPlaying() {
+  const audioUrl = "src/assets/Tate McRae - Miss possessive (Lyric Video).mp3";
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      setProgress(audio.duration ? (audio.currentTime / audio.duration) * 100 : 0);
+    };
+    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onEnded = () => setIsPlaying(false);
+
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("ended", onEnded);
+    return () => {
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, []);
+
+  function togglePlay() {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  }
+
+  function seek(e: React.MouseEvent<HTMLDivElement>) {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = ratio * duration;
+  }
+
+  function formatTime(s: number) {
+    if (!s || isNaN(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  }
+
   return (
     <div className="stripes-moss rounded-xl border-2 border-[var(--moss-deep)] px-5 py-3">
+      <audio ref={audioRef} src={audioUrl} />
       <div className="flex flex-wrap items-center justify-between gap-3 text-[var(--cream)]">
-        <p className="font-marker text-2xl">♪ now playing — “jardin” by haru nemuri</p>
-        <div className="flex items-center gap-2 font-pixel text-sm">
-          <span>01:24</span>
-          <span className="block h-1.5 w-40 rounded-full bg-[var(--cream)]/40">
-            <span className="block h-1.5 w-1/3 rounded-full bg-[var(--honey)]" />
-          </span>
-          <span>03:48</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={togglePlay}
+            className="grid h-8 w-8 place-items-center rounded-full border-2 border-[var(--cream)] bg-[var(--cream)]/20 hover:bg-[var(--cream)]/40 transition-colors font-pixel text-lg"
+          >
+            {isPlaying ? "❚❚" : "▶"}
+          </button>
+          <p className="font-marker text-2xl">♪ Miss Possesive by Tate Mc Rae</p>
+        </div>
+        <div className="flex items-center gap-2 font-pixel text-sm w-full md:w-auto">
+          <span>{formatTime(currentTime)}</span>
+          <div
+            className="relative block h-2 flex-1 min-w-[120px] cursor-pointer rounded-full bg-[var(--cream)]/40"
+            onClick={seek}
+          >
+            <span
+              className="absolute left-0 top-0 h-2 rounded-full bg-[var(--honey)] transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <span>{formatTime(duration)}</span>
         </div>
       </div>
     </div>
@@ -258,12 +813,12 @@ function CottageCard() {
   return (
     <article className="relative overflow-hidden rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-3">
       <div className="overflow-hidden rounded-lg border-2 border-[var(--moss-deep)]">
-        <img src={cottage} alt="mushroom cottage" width={768} height={768} className="aspect-square w-full object-cover" loading="lazy" />
+        <img src={petra} alt="Petra" width={768} height={768} className="aspect-square w-full object-cover" loading="lazy" />
       </div>
       <div className="mt-3 px-1">
-        <h3 className="font-marker text-3xl text-[var(--moss-deep)]">the studio 🏠</h3>
+        <h3 className="font-marker text-3xl text-[var(--moss-deep)]">Photography Projects 🏠</h3>
         <p className="font-hand text-base text-[var(--ink)]">
-          a tiny room above a bakery. there are too many plants, exactly the right amount of tape, and a film scanner named <em>basil</em>.
+          a <em>Petra F. Collins</em> inspired photographs and editing.
         </p>
       </div>
     </article>
@@ -298,23 +853,27 @@ function WorksList() {
 }
 
 function GalleryStrip() {
-  const items = [sketchbook, claybear, zine, rain, cottage];
+  const items = [beach, Up, zine, tanghals11, Bea];
   return (
-    <section className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] p-4">
+    <Carousel className="rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] p-4">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="font-marker text-3xl text-[var(--moss-deep)]">·· the polaroid wall ··</h2>
-        <span className="font-pixel text-xs text-[var(--tomato)]">drag (pretend)</span>
+        <span className="font-pixel text-xs text-[var(--tomato)]">use arrows</span>
       </div>
-      <div className="flex gap-5 overflow-x-auto pb-3">
+      <CarouselContent>
         {items.map((src, i) => (
-          <figure key={i} className={`relative shrink-0 rounded-lg border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-2 ${i % 2 ? "rotate-2" : "-rotate-2"}`}>
-            <img src={src} alt="" width={180} height={180} className="h-44 w-44 rounded-md object-cover" loading="lazy" />
-            <figcaption className="mt-2 text-center font-hand text-sm text-[var(--ink)]">no. 0{i + 1}</figcaption>
-            <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-3" />
-          </figure>
+          <CarouselItem key={i} className="basis-1/3 md:basis-1/4 lg:basis-1/5 flex justify-center">
+            <figure className={`relative rounded-lg border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-2 ${i % 2 ? "rotate-2" : "-rotate-2"}`}>
+              <img src={src} alt="" width={180} height={180} className="h-44 w-44 rounded-md object-cover" loading="lazy" />
+              <figcaption className="mt-2 text-center font-hand text-sm text-[var(--ink)]">no. 0{i + 1}</figcaption>
+              <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-3 absolute" />
+            </figure>
+          </CarouselItem>
         ))}
-      </div>
-    </section>
+      </CarouselContent>
+      <CarouselPrevious className="border-2 border-[var(--moss-deep)] bg-[var(--cream)] text-[var(--moss-deep)] hover:bg-[var(--moss-soft)]" />
+      <CarouselNext className="border-2 border-[var(--moss-deep)] bg-[var(--cream)] text-[var(--moss-deep)] hover:bg-[var(--moss-soft)]" />
+    </Carousel>
   );
 }
 
@@ -332,7 +891,7 @@ function Guestbook() {
         <form className="mt-3 space-y-2" onSubmit={(e) => e.preventDefault()}>
           <input placeholder="your name" className="w-full rounded-md border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] px-3 py-2 font-hand placeholder:text-[var(--moss-deep)]/60" />
           <textarea placeholder="a note…" rows={3} className="w-full rounded-md border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] px-3 py-2 font-hand placeholder:text-[var(--moss-deep)]/60" />
-          <button className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] px-5 py-2 font-marker text-xl text-[var(--cream)] hover:bg-[var(--berry)]">
+          <button className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] px-5 py-2 font-marker text-xl text-[var(--cream)] hover:bg-[var(--berry)] transition-colors">
             send with love ♡
           </button>
         </form>
@@ -363,7 +922,7 @@ function Marquee() {
 function Footer() {
   return (
     <footer className="mx-auto mt-6 flex flex-wrap items-center justify-between gap-3 px-2 font-hand text-sm text-[var(--moss-deep)]">
-      <p>© 2026 juno park · handcoded with care 🍵</p>
+      <p>© 2026 Caurie M. Piamonte · handcoded with care 🍵</p>
       <div className="flex items-center gap-2">
         <a className="underline decoration-dotted">previous</a>
         <span>·· small web ring ··</span>
