@@ -8,7 +8,27 @@ import beach from "@/assets/6093750284933861374.jpg";
 import Up from "@/assets/6093750284933861397.jpg";
 import zine from "@/assets/6093750284933861395.jpg";
 import Stopmotion from "@/assets/6093750284933861395.jpg";
+import euphoriaDubbing from "@/assets/EUPHORIA_dubbing.mp4";
+import beatMatching from "@/assets/CAxTNBH_Beat_Matching.m4a";
+import latchMedley from "@/assets/Latch_medley.m4a";
+import promiscuousRemix from "@/assets/promiscuous_remix.m4a";
+import rocketeerMashup from "@/assets/rocketeer_mashup.m4a";
+import sportscarCutUp from "@/assets/sportscar cut up.m4a";
 import missPossessive from "@/assets/Tate McRae - Miss possessive (Lyric Video).mp3";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Disc3,
+  Heart,
+  ListMusic,
+  Maximize2,
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  X,
+} from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -31,6 +51,13 @@ interface AudioTrack {
   duration?: number;
 }
 
+interface MediaProject {
+  title: string;
+  subtitle: string;
+  url: string;
+  kind: "audio" | "video";
+}
+
 // ─── Static data ─────────────────────────────────────────────────────────────
 
 const works = [
@@ -47,6 +74,16 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "comms",    label: "❀ comms"    },
   { id: "contact",  label: "✉ contact"  },
   { id: "shrine",   label: "♡ shrine"   },
+];
+
+const audioEngineeringProjects: MediaProject[] = [
+  { title: "EUPHORIA Dubbing", subtitle: "Dubbing and sound redesign", url: euphoriaDubbing, kind: "video" },
+  { title: "CAxTNBH Beat Matching", subtitle: "Beat matching study", url: beatMatching, kind: "audio" },
+  { title: "Latch Medley", subtitle: "Medley and arrangement", url: latchMedley, kind: "audio" },
+  { title: "Promiscuous Remix", subtitle: "Remix and edit", url: promiscuousRemix, kind: "audio" },
+  { title: "Rocketeer Mashup", subtitle: "Mashup experiment", url: rocketeerMashup, kind: "audio" },
+  { title: "Sportscar Cut Up", subtitle: "Cut-up exercise", url: sportscarCutUp, kind: "audio" },
+  { title: "Miss Possessive", subtitle: "Lyric video audio", url: missPossessive, kind: "audio" },
 ];
 
 // ─── Root component ───────────────────────────────────────────────────────────
@@ -312,29 +349,508 @@ function WorksTab() {
 // ─── Projects tab ─────────────────────────────────────────────────────────────
 
 function ProjectsTab() {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
   return (
     <section className="grid gap-6">
       <header className="flex items-baseline justify-between border-b-2 border-dashed border-[var(--moss-deep)] pb-2">
         <h2 className="font-marker text-4xl text-[var(--moss-deep)]">projects 🎮</h2>
-        <span className="font-pixel text-xs text-[var(--tomato)]">in progress</span>
+        <span className="font-pixel text-xs text-[var(--tomato)]">sound portfolio</span>
       </header>
-      <div className="grid gap-6">
-        <article className="relative rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] p-6">
-          <h3 className="font-marker text-3xl text-[var(--berry)]">Creative Canvas</h3>
-          <p className="mt-2 font-hand text-sm text-[var(--ink)]">
-            A portfolio website built with React, TypeScript, and Tailwind CSS. Features an interactive carousel gallery, audio player, and tabbed navigation system.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">React</span>
-            <span className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">TypeScript</span>
-            <span className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">Tailwind</span>
+
+      <article className="overflow-hidden rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream)]">
+        <div className="grid md:grid-cols-[1.05fr_1fr]">
+          <button
+            type="button"
+            onClick={() => setSelectedIndex(0)}
+            className="group relative min-h-72 overflow-hidden bg-[#191414] text-left"
+          >
+            <video src={euphoriaDubbing} muted preload="metadata" className="h-full min-h-72 w-full object-cover opacity-75 transition duration-500 group-hover:scale-105 group-hover:opacity-90" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
+            <span className="absolute bottom-5 left-5 grid h-14 w-14 place-items-center rounded-full bg-[#1ed760] text-black shadow-xl transition-transform group-hover:scale-110">
+              <Play className="ml-1 h-7 w-7 fill-current" />
+            </span>
+            <p className="absolute bottom-6 left-24 font-pixel text-sm uppercase tracking-widest text-white">play featured video</p>
+          </button>
+
+          <div className="p-6 md:p-8">
+            <p className="font-pixel text-xs uppercase tracking-[0.25em] text-[var(--tomato)]">selected project</p>
+            <h3 className="mt-1 font-marker text-4xl text-[var(--berry)]">Audio Engineering</h3>
+            <p className="mt-2 font-hand text-base text-[var(--ink)]">
+              Dubbing, beat matching, mashups, remixes, and sound edits exploring rhythm, storytelling, and the shape of a good transition.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["Dubbing", "Mixing", "Beat Matching", "Sound Design"].map((tag) => (
+                <span key={tag} className="rounded-full border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] px-3 py-1 font-pixel text-xs text-[var(--moss-deep)]">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedIndex(0)}
+              className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] px-5 py-2 font-marker text-lg text-[var(--cream)] transition-colors hover:bg-[var(--berry)]"
+            >
+              <ListMusic className="h-5 w-5" />
+              open media player
+            </button>
           </div>
-          <a href="#" className="mt-4 inline-block rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] px-5 py-2 font-marker text-lg text-[var(--cream)] hover:bg-[var(--berry)] transition-colors">
-            view on github →
-          </a>
-        </article>
+        </div>
+      </article>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {audioEngineeringProjects.map((project, index) => (
+          <button
+            key={project.title}
+            type="button"
+            onClick={() => setSelectedIndex(index)}
+            className="group flex items-center gap-3 rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--cream-deep)] p-3 text-left transition hover:-translate-y-0.5 hover:bg-[var(--moss-soft)]"
+          >
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[var(--moss-deep)] text-[var(--cream)]">
+              {project.kind === "video" ? <Play className="h-5 w-5 fill-current" /> : <Disc3 className="h-6 w-6 transition-transform group-hover:rotate-45" />}
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate font-marker text-lg text-[var(--berry)]">{project.title}</span>
+              <span className="block truncate font-pixel text-xs text-[var(--ink)]/70">{project.subtitle}</span>
+            </span>
+          </button>
+        ))}
       </div>
+
+      {selectedIndex !== null && (
+        <GardenMediaPlayerModal
+          projects={audioEngineeringProjects}
+          initialIndex={selectedIndex}
+          onClose={() => setSelectedIndex(null)}
+        />
+      )}
     </section>
+  );
+}
+
+function GardenMediaPlayerModal({
+  projects,
+  initialIndex,
+  onClose,
+}: {
+  projects: MediaProject[];
+  initialIndex: number;
+  onClose: () => void;
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.8);
+  const mediaRef = useRef<HTMLMediaElement | null>(null);
+  const current = projects[currentIndex];
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  function connectMedia(element: HTMLMediaElement | null) {
+    mediaRef.current = element;
+    if (element) element.volume = volume;
+  }
+
+  function togglePlay() {
+    const media = mediaRef.current;
+    if (!media) return;
+    if (media.paused) {
+      media.play().catch(() => setIsPlaying(false));
+    } else {
+      media.pause();
+    }
+  }
+
+  function selectTrack(index: number) {
+    mediaRef.current?.pause();
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    setCurrentIndex(index);
+  }
+
+  function moveTrack(direction: -1 | 1) {
+    selectTrack((currentIndex + direction + projects.length) % projects.length);
+  }
+
+  function formatTime(value: number) {
+    if (!Number.isFinite(value)) return "0:00";
+    const minutes = Math.floor(value / 60);
+    const seconds = Math.floor(value % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }
+
+  const mediaEvents = {
+    onTimeUpdate: (event: React.SyntheticEvent<HTMLMediaElement>) =>
+      setCurrentTime(event.currentTarget.currentTime),
+    onLoadedMetadata: (event: React.SyntheticEvent<HTMLMediaElement>) => {
+      event.currentTarget.volume = volume;
+      setDuration(event.currentTarget.duration);
+    },
+    onPlay: () => setIsPlaying(true),
+    onPause: () => setIsPlaying(false),
+    onEnded: () => moveTrack(1),
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--moss-deep)]/65 p-3 backdrop-blur-sm" onMouseDown={onClose}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Audio engineering media player"
+        onMouseDown={(event) => event.stopPropagation()}
+        className="window-shadow relative flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-2 border-[var(--moss-deep)] bg-[var(--cream)] text-[var(--ink)]"
+      >
+        <div className="gingham flex items-center gap-3 border-b-2 border-[var(--moss-deep)] px-4 py-2">
+          <div className="flex gap-1.5">
+            <span className="h-3 w-3 rounded-full border border-[var(--moss-deep)] bg-[var(--tomato)]" />
+            <span className="h-3 w-3 rounded-full border border-[var(--moss-deep)] bg-[var(--honey)]" />
+            <span className="h-3 w-3 rounded-full border border-[var(--moss-deep)] bg-[var(--moss)]" />
+          </div>
+          <div className="flex-1 rounded-md border border-[var(--moss-deep)] bg-[var(--cream)] px-3 py-1 font-pixel text-sm text-[var(--moss-deep)]">
+            ♪ audio-engineering.player
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close player" className="grid h-8 w-8 place-items-center rounded-full border-2 border-[var(--moss-deep)] bg-[var(--tomato)] text-[var(--cream)] transition hover:bg-[var(--berry)]">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="grid min-h-0 flex-1 md:grid-cols-[1fr_310px]">
+          <div className="polka min-h-0 overflow-y-auto p-5 md:p-8">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="font-pixel text-xs uppercase tracking-[0.25em] text-[var(--tomato)]">now playing</p>
+                <p className="font-hand text-sm text-[var(--moss-deep)]">sound archive · track {currentIndex + 1} of {projects.length}</p>
+              </div>
+              <span className="rotate-2 rounded-full border-2 border-[var(--berry)] bg-[var(--tomato-soft)] px-3 py-1 font-pixel text-xs text-[var(--berry)]">
+                {current.kind}
+              </span>
+            </div>
+
+            {current.kind === "video" ? (
+              <video
+                key={current.url}
+                ref={connectMedia}
+                src={current.url}
+                playsInline
+                preload="metadata"
+                onClick={togglePlay}
+                className="aspect-video w-full cursor-pointer rounded-xl border-2 border-[var(--moss-deep)] bg-black object-contain shadow-lg"
+                {...mediaEvents}
+              />
+            ) : (
+              <>
+                <audio key={current.url} ref={connectMedia} src={current.url} preload="metadata" {...mediaEvents} />
+                <div className="relative mx-auto grid aspect-square w-full max-w-sm place-items-center rounded-xl border-2 border-[var(--moss-deep)] bg-[var(--moss-soft)] shadow-lg">
+                  <div className="absolute inset-4 rounded-full border-2 border-dashed border-[var(--moss-deep)]/40" />
+                  <Disc3 className={`h-36 w-36 text-[var(--moss-deep)] ${isPlaying ? "animate-spin-slow" : ""}`} />
+                  <span className="tape absolute -top-2 left-1/2 -translate-x-1/2 -rotate-2" />
+                </div>
+              </>
+            )}
+
+            <div className="mt-6 flex items-end justify-between gap-4">
+              <div>
+                <h2 className="font-marker text-3xl text-[var(--berry)] md:text-5xl">{current.title}</h2>
+                <p className="mt-1 font-hand text-base">{current.subtitle} · Caurie M. Piamonte</p>
+              </div>
+              <span className="text-3xl text-[var(--tomato)]">♡</span>
+            </div>
+          </div>
+
+          <aside className="gingham-green min-h-0 overflow-y-auto border-l-2 border-[var(--moss-deep)] p-4">
+            <h3 className="font-marker text-2xl text-[var(--moss-deep)]">playlist ♪</h3>
+            <p className="mb-3 font-pixel text-xs text-[var(--ink)]/70">choose a track, then press play</p>
+            <div className="space-y-2">
+              {projects.map((project, index) => (
+                <button
+                  key={project.title}
+                  type="button"
+                  onClick={() => selectTrack(index)}
+                  className={`flex w-full items-center gap-3 rounded-lg border-2 p-2 text-left transition ${
+                    index === currentIndex
+                      ? "border-[var(--berry)] bg-[var(--tomato-soft)]"
+                      : "border-[var(--moss-deep)] bg-[var(--cream)] hover:bg-[var(--honey)]"
+                  }`}
+                >
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-[var(--moss-deep)] bg-[var(--moss-soft)]">
+                    {index === currentIndex && isPlaying ? (
+                      <Volume2 className="h-4 w-4 text-[var(--berry)]" />
+                    ) : (
+                      <span className="font-pixel text-xs text-[var(--moss-deep)]">{String(index + 1).padStart(2, "0")}</span>
+                    )}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate font-marker text-lg text-[var(--berry)]">{project.title}</span>
+                    <span className="block truncate font-pixel text-xs text-[var(--ink)]/65">{project.subtitle}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </aside>
+        </div>
+
+        <div className="stripes-moss border-t-2 border-[var(--moss-deep)] px-4 py-3 text-[var(--cream)]">
+          <div className="mx-auto mb-2 flex max-w-xl items-center gap-3 font-pixel text-xs">
+            <span className="w-9 text-right">{formatTime(currentTime)}</span>
+            <input
+              aria-label="Playback position"
+              type="range"
+              min={0}
+              max={duration || 0}
+              step={0.1}
+              value={Math.min(currentTime, duration || 0)}
+              onChange={(event) => {
+                const nextTime = Number(event.target.value);
+                if (mediaRef.current) mediaRef.current.currentTime = nextTime;
+                setCurrentTime(nextTime);
+              }}
+              className="garden-range flex-1"
+            />
+            <span className="w-9">{formatTime(duration)}</span>
+          </div>
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <div className="min-w-0">
+              <p className="truncate font-marker text-lg">{current.title}</p>
+              <p className="truncate font-pixel text-xs text-[var(--cream)]/75">Caurie M. Piamonte</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button type="button" onClick={() => moveTrack(-1)} aria-label="Previous track" className="hover:text-[var(--honey)]"><SkipBack className="h-5 w-5 fill-current" /></button>
+              <button type="button" onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"} className="grid h-11 w-11 place-items-center rounded-full border-2 border-[var(--cream)] bg-[var(--tomato)] transition hover:scale-105 hover:bg-[var(--berry)]">
+                {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="ml-0.5 h-5 w-5 fill-current" />}
+              </button>
+              <button type="button" onClick={() => moveTrack(1)} aria-label="Next track" className="hover:text-[var(--honey)]"><SkipForward className="h-5 w-5 fill-current" /></button>
+            </div>
+            <div className="ml-auto hidden items-center gap-2 sm:flex">
+              <Volume2 className="h-4 w-4" />
+              <input
+                aria-label="Volume"
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={volume}
+                onChange={(event) => {
+                  const nextVolume = Number(event.target.value);
+                  setVolume(nextVolume);
+                  if (mediaRef.current) mediaRef.current.volume = nextVolume;
+                }}
+                className="garden-range w-24"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MediaPlayerModal({
+  projects,
+  initialIndex,
+  onClose,
+}: {
+  projects: MediaProject[];
+  initialIndex: number;
+  onClose: () => void;
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.8);
+  const mediaRef = useRef<HTMLVideoElement | null>(null);
+  const current = projects[currentIndex];
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  function togglePlay() {
+    const media = mediaRef.current;
+    if (!media) return;
+    if (media.paused) {
+      media.play().catch(() => setIsPlaying(false));
+    } else {
+      media.pause();
+    }
+  }
+
+  function selectTrack(index: number) {
+    setCurrentTime(0);
+    setDuration(0);
+    setCurrentIndex(index);
+  }
+
+  function moveTrack(direction: -1 | 1) {
+    selectTrack((currentIndex + direction + projects.length) % projects.length);
+  }
+
+  function formatTime(value: number) {
+    if (!Number.isFinite(value)) return "0:00";
+    const minutes = Math.floor(value / 60);
+    const seconds = Math.floor(value % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm" onMouseDown={onClose}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Audio engineering media player"
+        onMouseDown={(event) => event.stopPropagation()}
+        className="relative flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121212] text-white shadow-2xl"
+      >
+        <button type="button" onClick={onClose} aria-label="Close player" className="absolute right-4 top-4 z-20 grid h-9 w-9 place-items-center rounded-full bg-black/60 text-white transition hover:bg-black">
+          <X className="h-5 w-5" />
+        </button>
+
+        <div className="grid min-h-0 flex-1 md:grid-cols-[1fr_300px]">
+          <div className="min-h-0 overflow-y-auto bg-gradient-to-b from-[#315c46] via-[#18251e] to-[#121212] p-5 md:p-8">
+            <div className="mb-6 flex gap-2">
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-black/50"><ChevronLeft className="h-5 w-5" /></span>
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-black/30"><ChevronRight className="h-5 w-5" /></span>
+            </div>
+
+            {current.kind === "video" ? (
+              <video
+                key={current.url}
+                ref={mediaRef}
+                src={current.url}
+                playsInline
+                preload="metadata"
+                onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+                onLoadedMetadata={(event) => {
+                  event.currentTarget.volume = volume;
+                  setDuration(event.currentTarget.duration);
+                }}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => moveTrack(1)}
+                className="aspect-video w-full rounded-lg bg-black object-contain shadow-2xl"
+              />
+            ) : (
+              <>
+                <video
+                  key={current.url}
+                  ref={mediaRef}
+                  src={current.url}
+                  playsInline
+                  preload="metadata"
+                  onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+                  onLoadedMetadata={(event) => {
+                    event.currentTarget.volume = volume;
+                    setDuration(event.currentTarget.duration);
+                  }}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => moveTrack(1)}
+                  className="hidden"
+                />
+                <div className="mx-auto grid aspect-square w-full max-w-md place-items-center rounded-lg bg-gradient-to-br from-[#1ed760] via-[#315c46] to-[#0b1710] shadow-2xl">
+                  <Disc3 className={`h-36 w-36 text-black/75 ${isPlaying ? "animate-spin-slow" : ""}`} />
+                </div>
+              </>
+            )}
+
+            <div className="mt-6 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-white/65">{current.kind} project</p>
+                <h2 className="mt-1 text-3xl font-bold tracking-tight md:text-5xl">{current.title}</h2>
+                <p className="mt-2 text-sm text-white/70">{current.subtitle} · Caurie M. Piamonte</p>
+              </div>
+              <Heart className="h-7 w-7 shrink-0 text-[#1ed760]" />
+            </div>
+          </div>
+
+          <aside className="min-h-0 overflow-y-auto border-l border-white/10 bg-[#181818] p-4">
+            <h3 className="mb-3 text-sm font-bold">Audio Engineering</h3>
+            <div className="space-y-1">
+              {projects.map((project, index) => (
+                <button
+                  key={project.title}
+                  type="button"
+                  onClick={() => selectTrack(index)}
+                  className={`flex w-full items-center gap-3 rounded-md p-2 text-left transition hover:bg-white/10 ${index === currentIndex ? "bg-white/10" : ""}`}
+                >
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded bg-[#282828]">
+                    {index === currentIndex && isPlaying ? <Volume2 className="h-4 w-4 text-[#1ed760]" /> : <span className="text-xs text-white/60">{index + 1}</span>}
+                  </span>
+                  <span className="min-w-0">
+                    <span className={`block truncate text-sm font-semibold ${index === currentIndex ? "text-[#1ed760]" : "text-white"}`}>{project.title}</span>
+                    <span className="block truncate text-xs text-white/55">{project.subtitle}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </aside>
+        </div>
+
+        <div className="border-t border-white/10 bg-[#181818] px-4 py-3">
+          <div className="mx-auto mb-2 flex max-w-xl items-center gap-3 text-[11px] text-white/60">
+            <span className="w-9 text-right">{formatTime(currentTime)}</span>
+            <input
+              aria-label="Playback position"
+              type="range"
+              min={0}
+              max={duration || 0}
+              step={0.1}
+              value={Math.min(currentTime, duration || 0)}
+              onChange={(event) => {
+                const nextTime = Number(event.target.value);
+                if (mediaRef.current) mediaRef.current.currentTime = nextTime;
+                setCurrentTime(nextTime);
+              }}
+              className="spotify-range flex-1"
+            />
+            <span className="w-9">{formatTime(duration)}</span>
+          </div>
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{current.title}</p>
+              <p className="truncate text-xs text-white/50">Caurie M. Piamonte</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button type="button" onClick={() => moveTrack(-1)} aria-label="Previous track" className="text-white/70 hover:text-white"><SkipBack className="h-5 w-5 fill-current" /></button>
+              <button type="button" onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"} className="grid h-10 w-10 place-items-center rounded-full bg-white text-black transition hover:scale-105">
+                {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="ml-0.5 h-5 w-5 fill-current" />}
+              </button>
+              <button type="button" onClick={() => moveTrack(1)} aria-label="Next track" className="text-white/70 hover:text-white"><SkipForward className="h-5 w-5 fill-current" /></button>
+            </div>
+            <div className="ml-auto hidden items-center gap-2 sm:flex">
+              <Volume2 className="h-4 w-4 text-white/60" />
+              <input
+                aria-label="Volume"
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={volume}
+                onChange={(event) => {
+                  const nextVolume = Number(event.target.value);
+                  setVolume(nextVolume);
+                  if (mediaRef.current) mediaRef.current.volume = nextVolume;
+                }}
+                className="spotify-range w-24"
+              />
+              <Maximize2 className="h-4 w-4 text-white/50" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
