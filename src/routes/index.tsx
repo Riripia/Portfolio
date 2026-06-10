@@ -8,6 +8,7 @@ import beach from "@/assets/6093750284933861374.jpg";
 import Up from "@/assets/6093750284933861397.jpg";
 import zine from "@/assets/6093750284933861395.jpg";
 import Stopmotion from "@/assets/6093750284933861395.jpg";
+import missPossessive from "@/assets/Tate McRae - Miss possessive (Lyric Video).mp3";
 import {
   Carousel,
   CarouselContent,
@@ -50,7 +51,7 @@ const TABS: { id: TabId; label: string }[] = [
 
 // ─── Root component ───────────────────────────────────────────────────────────
 
-function Index() {
+export function Index() {
   const [time, setTime] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("about");
 
@@ -726,7 +727,7 @@ function LinksCard() {
 }
 
 function NowPlaying() {
-  const audioUrl = "src/assets/Tate McRae - Miss possessive (Lyric Video).mp3";
+  const audioUrl = missPossessive;
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
